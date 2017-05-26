@@ -1,0 +1,7 @@
+DEPENDENCIES
+  kerl2
+    path: .
+    metadata: true
+
+GRAPH
+  kerl2 (0.0.1)

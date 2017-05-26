@@ -2,9 +2,8 @@
 
 resource_name :kerl_instance
 
-property :name, String, name_property: true, required: true
 # can be any git reference
-property :version, String, default: lazy { name }
+property :version, String, name_property: true, required: true
 property :checksum, String, default: lazy {
   node['kerl2']['checksums'][version] }
 property :url, String, default: lazy {

@@ -13,26 +13,16 @@ property :build_env, Hash, default: {}
 
 default_action :build
 
-load_current_value do
-  current_release = ''
+action :build do
+  unless kerl_build_exists?
+    kerl_shell_out!('update releases')
+    Chef::Log.info("Building OTP release #{release}, this is going to take a few minutes...")
+    kerl_shell_out!("build #{release} #{name}", env: build_env)
 
-  kerl_shell_out!('list builds').each do |line|
-    build_release, build_name = line.split(',')
-
-    if build_name == name
-      current_release = build_release
-      break
-    end
+    new_resource.updated_by_last_action true
   end
-
-  p "wkpo current_release = #{current_release} VS #{release} AND #{name}"
-
-  release current_release
 end
 
-action :build do
-  converge_if_changed do
-    kerl_shell_out!('update releases')
-    kerl_shell_out!("build #{release} #{name}", env: build_env)
-  end
+def kerl_build_exists?
+  kerl_shell_out!('list builds').any? { |line| line == "#{release},#{name}" }
 end

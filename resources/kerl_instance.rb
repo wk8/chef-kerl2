@@ -4,10 +4,10 @@ resource_name :kerl_instance
 
 # can be any git reference
 property :version, String, name_property: true, required: true
-property :checksum, String, default: lazy {
-  node['kerl2']['checksums'][version] }
 property :url, String, default: lazy {
   "https://raw.githubusercontent.com/kerl/kerl/#{version}/kerl" }
+property :checksum, String, default: lazy {
+  node['kerl2']['checksums'][version] }
 property :install_path, String, default: lazy {
   "/opt/kerl/instances/kerl_#{version}" }
 # whether to make it available system-wide

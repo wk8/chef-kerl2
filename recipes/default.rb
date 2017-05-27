@@ -1,37 +1,25 @@
-## Installs kerl - doesn't install any erlang build, though;
-## please use this cookbook's resources for that
+## Installs kerl, all OTP releases listed in `node['kerl2']['erlangs']`,
+## and also renders the shell profile file to source where needed
 
-kerl_instance node['kerl2']['version'] do
-  notifies :run, "ruby_block[kerl_instance_notif]", :immediately
+# install dependencies
+include_recipe "#{cookbook_name}::dependencies"
+
+# install kerl
+kerl_instance node['kerl2']['version']
+
+# install erlangs
+kerl_erlang_resources = node['kerl2']['erlangs'].map do |erlang|
+  kerl_erlang erlang
 end
 
-ruby_block 'kerl_instance_notif' do
-  block do
-    p "wkpo!! kerl_instance_notif"
+# render the shell profile file
+default_erlang = kerl_erlang_resources.first
+if node['kerl2']['shell_profile']['file'] && default_erlang
+  directory ::File.dirname(node['kerl2']['shell_profile']['file']) do
+    recursive true
   end
-  action :nothing
-end
 
-# TODO wkpo remove the rest
-
-kerl_build '18.3' do
-  notifies :run, "ruby_block[kerl_build_notif]", :immediately
-end
-
-ruby_block 'kerl_build_notif' do
-  block do
-    p "wkpo!! kerl_build_notif"
+  file node['kerl2']['shell_profile']['file'] do
+    content "source #{default_erlang.activate_path}\n"
   end
-  action :nothing
-end
-
-kerl_erlang '18.3' do
-  notifies :run, "ruby_block[kerl_install_notif]", :immediately
-end
-
-ruby_block 'kerl_install_notif' do
-  block do
-    p "wkpo!! kerl_install_notif"
-  end
-  action :nothing
 end

@@ -1,11 +1,20 @@
 # latest as of 05/26/17
 default['kerl2']['version'] = '1.5.1'
 
+# which erlangs to install; should be an array of OTP releases
+# the first one is special in that it will be the one activated in the shell
+# profile (if `node['kerl2']['shell_profile']['enabled']` is set to true)
+default['kerl2']['erlangs'] = %w(19.3)
+
+# see the comment on `['kerl2']['erlangs']` above
+default['kerl2']['shell_profile']['enabled'] = true
+default['kerl2']['shell_profile']['file'] = '/etc/profile.d/kerl.sh'
+
 # system-wide bin
 default['kerl2']['bin_path'] = '/usr/local/bin/kerl'
 default['kerl2']['erlangs_path'] = '/opt/kerl/erlangs'
 
-# TODO wkpo link to doc?
+# see https://github.com/kerl/kerl#tuning
 default['kerl2']['environment'] = {
   'KERL_BASE_DIR' => '/opt/kerl/base_dir'
 }

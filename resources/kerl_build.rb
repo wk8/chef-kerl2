@@ -16,8 +16,10 @@ default_action :build
 action :build do
   unless kerl_build_exists?
     kerl_shell_out!('update releases')
-    Chef::Log.info("Building OTP release #{release}, this is going to take a few minutes...")
-    kerl_shell_out!("build #{release} #{name}", env: build_env)
+    Chef::Log.info("Building Erlang/OTP release #{release}, this is going to take a few minutes...")
+    kerl_shell_out!("build #{release} #{name}", env: build_env,
+                    # building an OTP release can take a little while..
+                    timeout: 3600)
 
     new_resource.updated_by_last_action true
   end
